@@ -18,20 +18,50 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
     try{
         await client.connect();
-        const serviceCollection = client.db('oilService').collection('inventory');
+        const serviceCollection = client.db('oilService').collection('Inventory');
         
-        app.get('/inventory', async(req, res)=> {
+        app.get('/Inventory', async(req, res)=> {
             const query = {};
             const cursor = serviceCollection.find(query);
             const services = await cursor.toArray();
             res.send(services)
         });
 
-        app.get('/inventory/:id', async(req, res) => {
+        app.get('/Inventory/:id', async(req, res) => {
             const id = req.params.id;
             const query = {_id: ObjectId(id)};
             const service = await serviceCollection.findOne(query);
             res.send(service);
+        });
+
+
+        // post
+        app.post('/Inventory', async(req, res) => {
+            const newService = req.body;
+            const result = await serviceCollection.insertOne(newService);
+            res.send(result);
+        });
+
+        // DELETE
+        app.delete('/Inventory/:id', async(req, res) =>{
+            const id = req.params.id;
+            const query = {_id: ObjectId(id)};
+            const result = await serviceCollection.deleteOne(query);
+            res.send(result);
+        })
+
+        // update
+        app.put('/Inventory/:id', async(req, res)=> {
+            const id = req.params.id;
+            const query ={_id:  ObjectId(id)};
+            const product = req.body; 
+            const {quantity, sold} = product;
+            const updateDoc = {$set: {quantity, sold}};
+            const option = {upsert: true};
+            const result = await serviceCollection.updateOne(query, updateDoc, option );
+            res.send (result);
+                
+
         })
         
 
