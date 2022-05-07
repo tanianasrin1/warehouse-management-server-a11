@@ -1,8 +1,8 @@
 const express = require ('express');
 const app = express();
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors');
-const res = require('express/lib/response');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
 
@@ -60,7 +60,23 @@ async function run(){
             const option = {upsert: true};
             const result = await serviceCollection.updateOne(query, updateDoc, option );
             res.send (result);
-                
+              
+
+        });
+
+        app.get('/myItem', async(req, res)=>{
+            const email = req.query.email;
+            const query = {email};
+            const cursor = serviceCollection.find(query);
+            const services = await cursor.toArray();
+            console.log(services)
+            res.send(services);
+            
+        })
+        app.post('/getToken', (req, res)=> {
+            const user = req.body;
+            const accessToken = jwt.sign(user, process.env.ACCESS_SECRET_TOKEN, {expiresIn:'2d'});
+            res.send({accessToken})
 
         })
         
