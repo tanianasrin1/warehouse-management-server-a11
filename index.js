@@ -123,6 +123,10 @@ app.get('/', (req, res) => {
     res.send('Running My Node Service')
 });
 
+app.get('/hero', (req, res)=>{
+    res.send('Hero meets hero ku')
+})
+
 app.listen(port, ()=> {
     console.log('Server is running', port)
 })
