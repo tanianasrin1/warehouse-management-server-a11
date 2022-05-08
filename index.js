@@ -24,14 +24,16 @@ const verifyJwtToken = (req, res, next)=>{
 
     }
     const token = authHeader.split(' ')[1];
+    console.log(token);
     jwt.verify(token,process.env.ACCESS_SECRET_TOKEN,(err,decoded)=>{
         if(err){
             return res.status(403).send({massage: 'forbidden access'})
         }
 
         req.decoded= decoded;
+        next()
     })
-    next()
+    
 }
 
 
@@ -89,7 +91,7 @@ async function run(){
         app.get('/myItem', verifyJwtToken, async(req, res)=>{
             const decodedEmail = req.decoded?.email
             const email = req.query.email;
-
+            console.log(req.decoded);
             if(email === decodedEmail){
                 const query = {email};
                 const cursor = serviceCollection.find(query);
