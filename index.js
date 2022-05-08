@@ -87,7 +87,7 @@ async function run(){
         });
 
         app.get('/myItem', verifyJwtToken, async(req, res)=>{
-            const decodedEmail = req.decoded.email
+            const decodedEmail = req.decoded?.email
             const email = req.query.email;
 
             if(email === decodedEmail){
